@@ -32,7 +32,7 @@ set -e
 
 ./vault read auth/file/config
 set +e
-./vault write -format=json auth/file/login username=wac password=nielubueplackow && exit 1
+./vault write -format=json auth/file/login username=wac password=nielubieplackow && exit 1
 set -e
 ./vault write -format=json auth/file/login username=wac password=lubieplacki | tee wac.json
 
