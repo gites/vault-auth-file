@@ -41,16 +41,17 @@ func (b *backend) pathLogin(req *logical.Request, data *framework.FieldData) (*l
 	config, err := b.Config(req.Storage)
 
 	var fileTTL time.Duration = 300
+	var auth = false
 	//TODO: add caching for passwd file
 	userMap, err := getUsers(config.Path, fileTTL, b)
 	if err != nil {
-		b.logger.Info("vault-auth-file", err)
-		return nil, err
+		return nil, logical.CodedError(401, "Authentication Failure")
 	}
-
-	auth := authenticate(userMap[user], pass, b)
+	if userLine, ok := userMap[user]; ok {
+		auth = authenticate(userLine, pass, b)
+	}
 	if !auth {
-		return logical.ErrorResponse("Couldn't authenticate client"), nil
+		return nil, logical.CodedError(401, "Authentication Failure")
 	}
 
 	return &logical.Response{
@@ -91,16 +92,19 @@ func (b *backend) pathLoginRenew(req *logical.Request, data *framework.FieldData
 	config, err := b.Config(req.Storage)
 
 	var fileTTL time.Duration = 300
+	var auth = false
+
 	//TODO: add caching for passwd file
 	userMap, err := getUsers(config.Path, fileTTL, b)
 	if err != nil {
 		b.logger.Info("vault-auth-file", err)
-		return nil, err
+		return nil, logical.CodedError(401, "Authentication Failure")
 	}
-
-	auth := authenticate(userMap[user], pass, b)
+	if userLine, ok := userMap[user]; ok {
+		auth = authenticate(userLine, pass, b)
+	}
 	if !auth {
-		return logical.ErrorResponse("Couldn't authenticate client"), nil
+		return nil, logical.CodedError(401, "Authentication Failure")
 	}
 	if !policyutil.EquivalentPolicies(userMap[user].Policies, req.Auth.Policies) {
 		return logical.ErrorResponse("Policies have changed, not renewing"), nil
@@ -115,7 +119,7 @@ func authenticate(user users, pass string, b *backend) bool {
 	case "6":
 		sha512Hash, err := crypt.Crypt(pass, "$6$"+hash[2]+"$")
 		if err != nil {
-			b.logger.Error("vault-auth-file", "error", err)
+			b.logger.Info("vault-auth-file", "error", err)
 			return false
 		}
 		if user.Hash == sha512Hash {
@@ -132,10 +136,9 @@ func authenticate(user users, pass string, b *backend) bool {
 func getUsers(filePath string, fileTTL time.Duration, b *backend) (map[string]users, error) {
 
 	file, err := os.Open(filePath)
-	defer file.Close()
 
 	if err != nil {
-		b.logger.Error("vault-auth-file", "error", err)
+		b.logger.Info("vault-auth-file", "error", err)
 		return nil, err
 	}
 
@@ -143,7 +146,7 @@ func getUsers(filePath string, fileTTL time.Duration, b *backend) (map[string]us
 
 	var (
 		line     string
-		lineNum  = 1
+		lineNum  = 0
 		tabUsers users
 	)
 	userMap := make(map[string]users)
@@ -159,7 +162,7 @@ func getUsers(filePath string, fileTTL time.Duration, b *backend) (map[string]us
 				strings.Split(strings.Trim(splitLine[2], " \n"), ","),
 			}
 			userMap[tabUsers.User] = tabUsers
-		} else {
+		} else if err != io.EOF {
 			b.logger.Info("vault-auth-file: malformed line",
 				"line", lineNum, "path", filePath)
 		}
@@ -169,8 +172,9 @@ func getUsers(filePath string, fileTTL time.Duration, b *backend) (map[string]us
 		}
 	}
 
+	file.Close()
 	if err != io.EOF {
-		b.logger.Error("vault-auth-file", "error", err)
+		b.logger.Info("vault-auth-file", "error", err)
 		return nil, err
 	}
 
