@@ -2,12 +2,12 @@ package authfile
 
 import (
 	"fmt"
-        "time"
+	"time"
 
 	"github.com/fatih/structs"
 	"github.com/hashicorp/vault/logical"
 	"github.com/hashicorp/vault/logical/framework"
-        "github.com/pkg/errors"
+	"github.com/pkg/errors"
 )
 
 func pathConfig(b *backend) *framework.Path {
@@ -18,14 +18,14 @@ func pathConfig(b *backend) *framework.Path {
 				Type:        framework.TypeString,
 				Description: "The path to the file with users, passwords hashes and roles",
 			},
-                        "ttl": &framework.FieldSchema{
-                                Type: framework.TypeDurationSecond,
-                                Description: "Duration after which authentication will expire.",
-                        },
-                        "max_ttl": &framework.FieldSchema{
-                                Type: framework.TypeDurationSecond,
-                                Description: "Maximum duration after which authentication will expire.",
-                        },
+			"ttl": &framework.FieldSchema{
+				Type:        framework.TypeDurationSecond,
+				Description: "Duration after which authentication will expire.",
+			},
+			"max_ttl": &framework.FieldSchema{
+				Type:        framework.TypeDurationSecond,
+				Description: "Maximum duration after which authentication will expire.",
+			},
 		},
 		Callbacks: map[logical.Operation]framework.OperationFunc{
 			logical.ReadOperation:   b.pathConfigRead,
@@ -45,8 +45,8 @@ func (b *backend) pathConfigRead(req *logical.Request, data *framework.FieldData
 		return nil, nil
 	}
 
-        cfg.TTL /= time.Second
-        cfg.MaxTTL /= time.Second
+	cfg.TTL /= time.Second
+	cfg.MaxTTL /= time.Second
 
 	resp := &logical.Response{
 		Data: structs.New(cfg).Map(),
@@ -55,19 +55,19 @@ func (b *backend) pathConfigRead(req *logical.Request, data *framework.FieldData
 }
 
 func (b *backend) pathConfigWrite(req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
-        //TODO: validate data
-	path := data.Get("path").(string)
-        if path == "" {
-               return nil, fmt.Errorf(`missing field "path"`)
-        }
-        ttl := time.Duration(data.Get("ttl").(int)) * time.Second
-        maxTTL := time.Duration(data.Get("max_ttl").(int)) * time.Second
 
-        var err error
+	path := data.Get("path").(string)
+	if path == "" {
+		return nil, fmt.Errorf(`missing field "path"`)
+	}
+	ttl := time.Duration(data.Get("ttl").(int)) * time.Second
+	maxTTL := time.Duration(data.Get("max_ttl").(int)) * time.Second
+
+	var err error
 	entry, err := logical.StorageEntryJSON("config", &config{
-		Path:         path,
-                TTL:          ttl,
-                MaxTTL:       maxTTL,
+		Path:   path,
+		TTL:    ttl,
+		MaxTTL: maxTTL,
 	})
 
 	if err != nil {
@@ -98,11 +98,11 @@ func (b *backend) Config(s logical.Storage) (*config, error) {
 }
 
 type config struct {
-        // Path to file with users, passwords and polices 
-	Path         string   `json:"path" structs:"path"`
-        // TTL and MaxTTL are the default TTLs.
-        TTL    time.Duration `json:"ttl" structs:"ttl,omitempty"`
-        MaxTTL time.Duration `json:"max_ttl" structs:"max_ttl,omitempty"`
+	// Path to file with users, passwords and polices
+	Path string `json:"path" structs:"path"`
+	// TTL and MaxTTL are the default TTLs.
+	TTL    time.Duration `json:"ttl" structs:"ttl,omitempty"`
+	MaxTTL time.Duration `json:"max_ttl" structs:"max_ttl,omitempty"`
 }
 
 const pathConfigHelpSyn = `

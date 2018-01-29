@@ -3,9 +3,10 @@ package authfile
 import (
 	"github.com/hashicorp/vault/logical"
 	"github.com/hashicorp/vault/logical/framework"
-        log "github.com/mgutz/logxi/v1"
+	log "github.com/mgutz/logxi/v1"
 )
 
+//Factory function implementation
 func Factory(conf *logical.BackendConfig) (logical.Backend, error) {
 	b := Backend(conf)
 	err := b.Setup(conf)
@@ -15,14 +16,14 @@ func Factory(conf *logical.BackendConfig) (logical.Backend, error) {
 	return b, nil
 }
 
+//Backend function implementation
 func Backend(conf *logical.BackendConfig) *backend {
 	var b backend
 
 	b.logger = conf.Logger
-    if b.logger.IsInfo() {
-        b.logger.Info("vault-auth-file: starting...", "version", HumanVersion)
-    }
-
+	if b.logger.IsInfo() {
+		b.logger.Info("vault-auth-file: starting...", "version", HumanVersion)
+	}
 
 	b.Backend = &framework.Backend{
 		Help:        backendHelp,
@@ -45,7 +46,7 @@ func Backend(conf *logical.BackendConfig) *backend {
 
 type backend struct {
 	*framework.Backend
-        logger log.Logger
+	logger log.Logger
 }
 
 const backendHelp = `

@@ -10,13 +10,15 @@ PID=$!
 sleep 1
 export VAULT_ADDR=http://127.0.0.1:8200
 SHA_256SUM=`sha256sum /home/wac/go/src/vault-auth-file/vault-auth-file|cut -d' ' -f1`
-./vault write sys/plugins/catalog/vault-auth-file sha_256=$SHA_256SUM command=vault-auth-file
+./vault write sys/plugins/catalog/vault-auth-file \
+        sha_256=$SHA_256SUM \
+        command=vault-auth-file
 
-./vault auth-enable  -path=file   -plugin-name vault-auth-file plugin
+./vault auth enable -path=file -plugin-name vault-auth-file plugin
 
-./vault auth -methods
+./vault auth list
 
-./vault audit-enable file file_path=./vault_audit.log log_raw=true
+./vault audit enable file file_path=./vault_audit.log log_raw=true
 
 set +e
 ./vault write auth/file/login username=wac password=lubieplacki && exit 1
@@ -34,8 +36,10 @@ set +e
 set -e
 ./vault write -format=json auth/file/login username=wac password=lubieplacki | tee wac.json
 
-./vault token-renew `cat wac.json  | grep client_token | cut -d'"' -f 4`
+./vault token renew `cat wac.json  | grep client_token | cut -d'"' -f 4`
 
 set +e
+#cat *log
+#sleep 3600
 kill $PID
 rm wac.json

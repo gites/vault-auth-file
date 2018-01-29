@@ -1,24 +1,9 @@
 package authfile
 
 import (
-/*	"io/ioutil"
-	"math/rand"
-	"net/http"
-	"net/url"
-	"os"
-
-	"fmt"
-
-	"bytes"
-	"encoding/json"
-
-	"crypto/rsa"
-*/
-//	"github.com/hashicorp/vault/helper/policyutil"
-//        "time"
 	"testing"
+
 	"github.com/hashicorp/vault/logical"
-	//logicaltest "github.com/hashicorp/vault/logical/testing"
 )
 
 func TestBackend_Config(t *testing.T) {
@@ -34,7 +19,7 @@ func TestBackend_Config(t *testing.T) {
 
 	// Valid Case
 	data := map[string]interface{}{
-		"path":    "/etc/vault/password-file",
+		"path": "/etc/vault/password-file",
 	}
 
 	_, err = b.HandleRequest(&logical.Request{
@@ -63,8 +48,7 @@ func TestBackend_Config(t *testing.T) {
 	}
 
 	// Missing path
-	data2 := map[string]interface{}{
-	}
+	data2 := map[string]interface{}{}
 
 	_, err = b.HandleRequest(&logical.Request{
 		Operation: logical.UpdateOperation,
@@ -78,8 +62,8 @@ func TestBackend_Config(t *testing.T) {
 
 	// Bad ttl
 	data3 := map[string]interface{}{
-		"path":    "/etc/vault/password-file",
-		"ttl":     "auioe",
+		"path": "/etc/vault/password-file",
+		"ttl":  "auioe",
 	}
 
 	_, err = b.HandleRequest(&logical.Request{
@@ -93,11 +77,11 @@ func TestBackend_Config(t *testing.T) {
 	}
 }
 func TestBackend_Authenticate(t *testing.T) {
-        var user users
-        user.User = "gites"
-        user.Hash = "$6$spfjUPN4$6ap3h.6Fac23HO/CFTZpQYdwvZ8zFflZkCQMWVO.13pCFEOjw8sjVljiIU6SgAhRDwwUBK1DYvHmBdoz/3wef0"
-        user.Policies = []string{"dev","ops","ping"}
-        pass := "gitesgites"
+	var user users
+	user.User = "gites"
+	user.Hash = "$6$spfjUPN4$6ap3h.6Fac23HO/CFTZpQYdwvZ8zFflZkCQMWVO.13pCFEOjw8sjVljiIU6SgAhRDwwUBK1DYvHmBdoz/3wef0"
+	user.Policies = []string{"dev", "ops", "ping"}
+	pass := "gitesgites"
 	if !authenticate(user, pass, nil) {
 		t.Fatal("Couldn't authenticate request")
 	}
