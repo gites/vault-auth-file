@@ -3,7 +3,7 @@ package authfile
 import "fmt"
 
 // Version build
-const Version = "0.0.1.dev"
+const Version = "0.0.2.dev"
 
 var (
 	// Name of the program
