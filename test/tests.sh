@@ -34,12 +34,13 @@ set -e
 set +e
 ./vault write -format=json auth/file/login username=wac password=nielubieplackow && exit 1
 set -e
-./vault write -format=json auth/file/login username=wac password=lubieplacki | tee wac.json
+./vault write -format=json auth/file/login username=wac password=lubieplacki
 
-./vault token renew `cat wac.json  | grep client_token | cut -d'"' -f 4`
+./vault login -method=userpass -path=file username=wac password=lubieplacki
+
+./vault token renew
 
 set +e
 #cat *log
 #sleep 3600
 kill $PID
-rm wac.json

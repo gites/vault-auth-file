@@ -34,6 +34,27 @@ func pathLogin(b *backend) *framework.Path {
 	}
 }
 
+func pathLoginUserpass(b *backend) *framework.Path {
+	return &framework.Path{
+		Pattern: "login/(?P<username>.+)",
+		Fields: map[string]*framework.FieldSchema{
+			"username": &framework.FieldSchema{
+				Type:        framework.TypeString,
+				Description: "Username of the user.",
+			},
+			"password": &framework.FieldSchema{
+				Type:        framework.TypeString,
+				Description: "Password of the user.",
+			},
+		},
+		Callbacks: map[logical.Operation]framework.OperationFunc{
+			logical.UpdateOperation: b.pathLogin,
+		},
+		HelpSynopsis:    pathLoginSyn,
+		HelpDescription: pathLoginDesc,
+	}
+}
+
 func (b *backend) pathLogin(req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
 	user := data.Get("username").(string)
 	pass := data.Get("password").(string)

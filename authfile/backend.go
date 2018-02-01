@@ -30,12 +30,13 @@ func Backend(conf *logical.BackendConfig) *backend {
 		BackendType: logical.TypeCredential,
 		PathsSpecial: &logical.Paths{
 			Unauthenticated: []string{
-				"login",
+				"login*",
 			},
 		},
 
 		Paths: append([]*framework.Path{
 			pathLogin(&b),
+			pathLoginUserpass(&b),
 			pathConfig(&b),
 		}),
 
