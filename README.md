@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/gites/vault-auth-file)](https://goreportcard.com/report/github.com/gites/vault-auth-file)
+
 # Vault Auth File
 HashiCorp Vault authentication plugin for authenticating via Unix password like file.
 
