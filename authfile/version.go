@@ -7,8 +7,8 @@ var (
 	Name string
 	// GitCommit hash
 	GitCommit string
-        // Version build
-        Version string
+	// Version build
+	Version string
 	//HumanVersion easy readable for Humans
 	HumanVersion = fmt.Sprintf("%s %s (%s)", Name, Version, GitCommit)
 )
