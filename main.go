@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 
+	"github.com/gites/vault-auth-file/authfile"
 	"github.com/hashicorp/vault/helper/pluginutil"
 	"github.com/hashicorp/vault/logical/plugin"
-        "github.com/gites/vault-auth-file/authfile"
 )
 
 func main() {
