@@ -18,4 +18,5 @@ vault-auth-file
 test/vault*
 test/*.log
 test/*.swp
+test/config.hcl
 *.swp

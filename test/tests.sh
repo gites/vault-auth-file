@@ -1,15 +1,28 @@
 #!/bin/bash
 
+GOPATH="${GOPATH:-$HOME/go}"
+
+TEST_DIR="${GOPATH}/src/github.com/gites/vault-auth-file/test"
+
+echo "GOPATH => $GOPATH"
+echo "TEST_DIR -> $TEST_DIR"
 
 set -ex
+
+cd $TEST_DIR
+
 go test -v ../...
 
-cd /home/wac/go/src/vault-auth-file/test
-./vault server -dev -config config.hcl 2>stderr.log 1>stdout.log &
+if [ ! -x vault ]; then
+  ./get_vault.sh
+fi
+
+echo "plugin_directory=\"$GOPATH/src/github.com/gites/vault-auth-file\"" > config.hcl
+./vault server -log-level=trace -dev -config config.hcl 2>stderr.log 1>stdout.log &
 PID=$!
 sleep 1
 export VAULT_ADDR=http://127.0.0.1:8200
-SHA_256SUM=`sha256sum /home/wac/go/src/vault-auth-file/vault-auth-file|cut -d' ' -f1`
+SHA_256SUM=`sha256sum ../vault-auth-file|cut -d' ' -f1`
 ./vault write sys/plugins/catalog/vault-auth-file \
         sha_256=$SHA_256SUM \
         command=vault-auth-file
@@ -24,13 +37,14 @@ set +e
 ./vault write auth/file/login username=wac password=lubieplacki && exit 1
 set -e
 
-./vault write auth/file/config path=/home/wac/go/src/vault-auth-file/test/password-file
+./vault write auth/file/config path="$TEST_DIR/password-file"
 
 ./vault read auth/file/config
 
-./vault write auth/file/config path=/home/wac/go/src/vault-auth-file/test/password-file ttl=123 max_ttl=456
+./vault write auth/file/config path="$TEST_DIR/password-file"
 
 ./vault read auth/file/config
+# This one should fail
 set +e
 ./vault write -format=json auth/file/login username=wac password=nielubieplackow && exit 1
 set -e
