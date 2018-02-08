@@ -14,6 +14,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/amoghe/go-crypt"
+  packages = ["."]
+  revision = "f85b640b0eefd979ef9bb2e919b53fe66f8b7b39"
+
+[[projects]]
+  branch = "master"
   name = "github.com/armon/go-radix"
   packages = ["."]
   revision = "1fca145dffbcaa8fe914309b1ec0cfc67500fe61"
@@ -112,7 +118,6 @@
     "helper/logformat",
     "helper/mlock",
     "helper/parseutil",
-    "helper/password",
     "helper/pluginutil",
     "helper/policyutil",
     "helper/salt",
@@ -199,12 +204,6 @@
 
 [[projects]]
   branch = "master"
-  name = "golang.org/x/crypto"
-  packages = ["ssh/terminal"]
-  revision = "39efaea5da11abd5e2b90a435b1f338cdb94619c"
-
-[[projects]]
-  branch = "master"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -220,10 +219,7 @@
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = [
-    "unix",
-    "windows"
-  ]
+  packages = ["unix"]
   revision = "af50095a40f9041b3b38960738837185c26e9419"
 
 [[projects]]
@@ -287,6 +283,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3effe701637a909054576651410d87ba352de7f03ead1adba90480f41c39d263"
+  inputs-digest = "fd9b5f5c8540e523552d0fe2048a09337848a18523ff211609f4919c9fbc7849"
   solver-name = "gps-cdcl"
   solver-version = 1

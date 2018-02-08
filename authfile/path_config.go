@@ -14,15 +14,15 @@ func pathConfig(b *backend) *framework.Path {
 	return &framework.Path{
 		Pattern: "config",
 		Fields: map[string]*framework.FieldSchema{
-			"path": &framework.FieldSchema{
+			"path": {
 				Type:        framework.TypeString,
 				Description: "The path to the file with users, passwords hashes and roles",
 			},
-			"ttl": &framework.FieldSchema{
+			"ttl": {
 				Type:        framework.TypeDurationSecond,
 				Description: "Duration after which authentication will expire.",
 			},
-			"max_ttl": &framework.FieldSchema{
+			"max_ttl": {
 				Type:        framework.TypeDurationSecond,
 				Description: "Maximum duration after which authentication will expire.",
 			},
