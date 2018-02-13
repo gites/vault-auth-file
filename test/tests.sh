@@ -11,7 +11,7 @@ set -ex
 
 cd $TEST_DIR
 
-go test -v ../... -timeout=60s -race -parallel=20
+go test -v ../authfile -timeout=60s -race -parallel=20 -covermode=atomic -coverprofile=coverage.txt
 
 if [ ! -x vault ]; then
   ./get_vault.sh
