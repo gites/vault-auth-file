@@ -11,7 +11,7 @@ set -ex
 
 cd $TEST_DIR
 
-go test -v ../...
+go test -v ../... -timeout=60s -race -parallel=20
 
 if [ ! -x vault ]; then
   ./get_vault.sh
