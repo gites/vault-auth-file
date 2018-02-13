@@ -1,5 +1,4 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/gites/vault-auth-file)](https://goreportcard.com/report/github.com/gites/vault-auth-file)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/gites/vault-auth-file)](https://goreportcard.com/report/github.com/gites/vault-auth-file) [![Build Status](https://travis-ci.org/gites/vault-auth-file.svg?branch=master)](https://travis-ci.org/gites/vault-auth-file)
 # Vault Auth File
 HashiCorp Vault authentication plugin for authenticating via Unix password like file.
 
