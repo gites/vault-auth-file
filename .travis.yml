@@ -21,3 +21,6 @@ install:
 script:
   - ./build.sh
   - ./test/tests.sh
+
+after_success:
+  - cd test && bash <(curl -s https://codecov.io/bash) -t 7a1058c2-aeb2-484b-bcb0-7fae48633926
