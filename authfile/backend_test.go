@@ -1,6 +1,7 @@
 package authfile
 
 import (
+	"context"
 	"testing"
 
 	"github.com/hashicorp/vault/logical"
@@ -12,7 +13,7 @@ func TestBackend_Config(t *testing.T) {
 	cfg.StorageView = storage
 
 	b := Backend(cfg)
-	err := b.Setup(cfg)
+	err := b.Setup(context.Background(), cfg)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -22,7 +23,7 @@ func TestBackend_Config(t *testing.T) {
 		"path": "/etc/vault/password-file",
 	}
 
-	_, err = b.HandleRequest(&logical.Request{
+	_, err = b.HandleRequest(context.Background(), &logical.Request{
 		Operation: logical.UpdateOperation,
 		Path:      "config",
 		Data:      data,
@@ -32,7 +33,7 @@ func TestBackend_Config(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := b.HandleRequest(&logical.Request{
+	resp, err := b.HandleRequest(context.Background(), &logical.Request{
 		Operation: logical.ReadOperation,
 		Path:      "config",
 		Storage:   storage,
@@ -50,7 +51,7 @@ func TestBackend_Config(t *testing.T) {
 	// Missing path
 	data2 := map[string]interface{}{}
 
-	_, err = b.HandleRequest(&logical.Request{
+	_, err = b.HandleRequest(context.Background(), &logical.Request{
 		Operation: logical.UpdateOperation,
 		Path:      "config",
 		Data:      data2,
@@ -66,7 +67,7 @@ func TestBackend_Config(t *testing.T) {
 		"ttl":  "auioe",
 	}
 
-	_, err = b.HandleRequest(&logical.Request{
+	_, err = b.HandleRequest(context.Background(), &logical.Request{
 		Operation: logical.UpdateOperation,
 		Path:      "config",
 		Data:      data3,
