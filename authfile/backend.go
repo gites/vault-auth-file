@@ -1,15 +1,17 @@
 package authfile
 
 import (
+	"context"
+
 	"github.com/hashicorp/vault/logical"
 	"github.com/hashicorp/vault/logical/framework"
 	log "github.com/mgutz/logxi/v1"
 )
 
 //Factory function implementation
-func Factory(conf *logical.BackendConfig) (logical.Backend, error) {
+func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend, error) {
 	b := Backend(conf)
-	err := b.Setup(conf)
+	err := b.Setup(ctx, conf)
 	if err != nil {
 		return nil, err
 	}

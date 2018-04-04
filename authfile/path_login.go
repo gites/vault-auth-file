@@ -2,6 +2,7 @@ package authfile
 
 import (
 	"bufio"
+	"context"
 	"io"
 	"os"
 	"strings"
@@ -55,11 +56,11 @@ func pathLoginUserpass(b *backend) *framework.Path {
 	}
 }
 
-func (b *backend) pathLogin(req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
+func (b *backend) pathLogin(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
 	user := data.Get("username").(string)
 	pass := data.Get("password").(string)
 
-	config, err := b.Config(req.Storage)
+	config, err := b.Config(ctx, req.Storage)
 
 	var fileTTL time.Duration = 300
 	var auth = false
@@ -95,7 +96,7 @@ func (b *backend) pathLogin(req *logical.Request, data *framework.FieldData) (*l
 	}, nil
 }
 
-func (b *backend) pathLoginRenew(req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
+func (b *backend) pathLoginRenew(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
 
 	if req.Auth == nil {
 		return logical.ErrorResponse("Couldn't authenticate client"), nil
@@ -110,7 +111,7 @@ func (b *backend) pathLoginRenew(req *logical.Request, data *framework.FieldData
 		return logical.ErrorResponse("No internal password data in request"), nil
 	}
 
-	config, err := b.Config(req.Storage)
+	config, err := b.Config(ctx, req.Storage)
 
 	var fileTTL time.Duration = 300
 	var auth = false
@@ -130,7 +131,7 @@ func (b *backend) pathLoginRenew(req *logical.Request, data *framework.FieldData
 	if !policyutil.EquivalentPolicies(userMap[user].Policies, req.Auth.Policies) {
 		return logical.ErrorResponse("Policies have changed, not renewing"), nil
 	}
-	return framework.LeaseExtend(config.TTL, config.MaxTTL, b.System())(req, data)
+	return framework.LeaseExtend(config.TTL, config.MaxTTL, b.System())(ctx, req, data)
 }
 
 func authenticate(user users, pass string, b *backend) bool {
