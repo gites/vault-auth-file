@@ -70,3 +70,36 @@ token_policies          [default dev ops]
 token_meta_username     "wac"                         
 token_meta_woop         "woop.sh" 
 ```
+Also `auth/file/login/<username>` endpoint can be used. This make vault-auth-file plugin compatible with Vault client binary and userpass auth method.
+
+Example:
+```bash
+vault write auth/file/login/wac username=wac password=lubieplacki 
+Key                    Value                        
+---                    -----                        
+token                  1c24c452-5599-f308-1f2b-4dc3f1621584                                              
+token_accessor         c7a57130-90a7-7bbc-279d-b984053b7ee3                                              
+token_duration         768h                         
+token_renewable        true                         
+token_policies         [default dev ops]            
+token_meta_username    wac                          
+token_meta_woop        woop.sh                      
+```
+Example using userpass auth method:
+```bash
+vault login -method=userpass -path=file username=wac 
+Password (will be hidden):
+Success! You are now authenticated. The token information displayed below
+is already stored in the token helper. You do NOT need to run "vault login"
+again. Future Vault requests will automatically use this token.
+
+Key                    Value
+---                    -----
+token                  08c7483b-3f8f-37fe-c648-2f6d019d0742
+token_accessor         9af3c49e-5ac2-f062-4e17-6c0058a2cc20
+token_duration         768h
+token_renewable        true
+token_policies         [default dev ops]
+token_meta_username    wac
+token_meta_woop        woop.sh
+```
